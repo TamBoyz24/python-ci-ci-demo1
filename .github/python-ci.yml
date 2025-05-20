@@ -1,0 +1,40 @@
+name: Python CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+tesst:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest coverage flake8 pylint
+
+      - name: Lint with flake8
+        run: |
+          echo "Running flake8..."
+          flake8 .--max-line-lenght=100
+      
+      - name: Lint with pylint
+        run: |
+          echo "Running pylint..."
+          pylint app.py text_app.py
+
+      - name: Run tests with coverage
+        run: |
+          echo "Running tests with coverage..."
+          coverage run -m pytest
+          coverage report -m
+          coverage xml
